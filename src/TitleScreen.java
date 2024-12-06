@@ -27,6 +27,7 @@ public class TitleScreen extends JPanel {
         frame.add(gameScreen);
         frame.revalidate();
         frame.repaint();
+        gameScreen.requestFocusInWindow();
     }
 
     // 타이틀 화면 그리기

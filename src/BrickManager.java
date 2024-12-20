@@ -5,10 +5,10 @@ import java.util.List;
 public class BrickManager {
     private List<Block> blocks;
 
-    public BrickManager(int panelWidth, int panelHeight) {
+    public BrickManager(int panelWidth, int panelHeight, int round) {
         blocks = new ArrayList<>();
-        int rows = 3;
-        int cols = 3;
+        int rows = round * 3; // 라운드에 따라 행 수 증가
+        int cols = round * 3; // 라운드에 따라 열 수 증가
         int blockWidth = panelWidth / cols;
         int blockHeight = panelHeight / rows;
 
@@ -41,7 +41,13 @@ public class BrickManager {
         }
     }
 
-    public List<Block> getBlocks() {
-        return blocks;
+    public int getRemainingBlocks() {
+        int count = 0;
+        for (Block block : blocks) {
+            if (!block.isDestroyed()) {
+                count++;
+            }
+        }
+        return count;
     }
 }

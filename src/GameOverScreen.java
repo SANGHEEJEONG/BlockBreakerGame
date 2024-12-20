@@ -16,4 +16,11 @@ public class GameOverScreen extends JPanel {
         g.setFont(new Font("Arial", Font.BOLD, 50));
         g.drawString("GAME OVER", 250, 300);
     }
+
+    public void showGameOverScreen() {
+        frame.getContentPane().removeAll();
+        frame.getContentPane().add(this);
+        frame.revalidate();
+        frame.repaint();
+    }
 }

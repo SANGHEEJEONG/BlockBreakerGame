@@ -37,4 +37,8 @@ public class Block {
     public boolean isDestroyed() {
         return destroyed;
     }
+
+    public Color getColor() {
+        return color; // 블록의 색상을 반환
+    }
 }

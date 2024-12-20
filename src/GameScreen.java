@@ -2,11 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreen extends JPanel implements Runnable {
     private JFrame frame;
     private Paddle paddle;
-    private Ball ball;
+    private List<Ball> balls; // 공 리스트로 관리
     private BrickManager brickManager;
     private boolean gameOver = false;
 
@@ -34,26 +36,37 @@ public class GameScreen extends JPanel implements Runnable {
 
     private void initializeGame() {
         paddle = new Paddle(350, 550);
-        ball = new Ball(390, 530);
+        balls = new ArrayList<>();
+        balls.add(new Ball(390, 530)); // 첫 번째 공 추가
         brickManager = new BrickManager(900, 420);
     }
 
     @Override
     public void run() {
         while (!gameOver) {
-            ball.move();
-            brickManager.checkCollision(ball);
+            List<Ball> newBalls = new ArrayList<>();
+            for (int i = 0; i < balls.size(); i++) {
+                Ball ball = balls.get(i);
+                ball.move();
+                newBalls.addAll(brickManager.checkCollision(ball));
 
-            if (ball.getBounds().intersects(paddle.getBounds())) {
-                ball.reverseY();
+                if (ball.getBounds().intersects(paddle.getBounds())) {
+                    ball.reverseY();
+                }
+
+                if (ball.isOutOfBounds(frame.getHeight())) {
+                    balls.remove(ball); // 화면 아래로 벗어난 공 제거
+                    i--; // 리스트에서 공 제거 후 인덱스 조정
+                }
             }
 
-            if (ball.isOutOfBounds(frame.getHeight())) {
+            balls.addAll(newBalls); // 복제된 공 추가
+
+            if (balls.isEmpty()) {
                 System.out.println("Game Over 조건 충족");
                 gameOver = true;
                 break;
             }
-
 
             repaint();
             try {
@@ -67,12 +80,13 @@ public class GameScreen extends JPanel implements Runnable {
         gameOverScreen.showGameOverScreen();
     }
 
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         paddle.draw(g);
-        ball.draw(g);
+        for (Ball ball : balls) { // 모든 공 그리기
+            ball.draw(g);
+        }
         brickManager.draw(g);
 
         if (gameOver) {

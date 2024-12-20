@@ -19,6 +19,22 @@ public class BrickManager {
         }
     }
 
+    public List<Ball> checkCollision(Ball ball) {
+        List<Ball> newBalls = new ArrayList<>();
+        for (Block block : blocks) {
+            if (!block.isDestroyed() && ball.getBounds().intersects(block.getBounds())) {
+                ball.reverseY();
+                if (block.getColor() == Color.YELLOW) {
+                    // 공 복제를 Ball 클래스에 위임
+                    newBalls.addAll(ball.split());
+                }
+                block.destroy();
+                break;
+            }
+        }
+        return newBalls;
+    }
+
     public void draw(Graphics g) {
         for (Block block : blocks) {
             block.draw(g);
@@ -27,15 +43,5 @@ public class BrickManager {
 
     public List<Block> getBlocks() {
         return blocks;
-    }
-
-    public void checkCollision(Ball ball) {
-        for (Block block : blocks) {
-            if (!block.isDestroyed() && ball.getBounds().intersects(block.getBounds())) {
-                ball.reverseY(); // Ball 클래스의 메서드로 속도 반전 처리
-                block.destroy();
-                break;
-            }
-        }
     }
 }

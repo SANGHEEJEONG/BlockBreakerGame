@@ -16,6 +16,10 @@ public class GameScreen extends JPanel implements Runnable {
     private int currentRound = 1; // 현재 라운드
     private int totalRounds = 3;  // 총 라운드 수
 
+    // 키 상태 변수
+    private boolean leftPressed = false;
+    private boolean rightPressed = false;
+
     public GameScreen(JFrame frame) {
         this.frame = frame;
         this.setBackground(Color.BLACK);
@@ -23,11 +27,21 @@ public class GameScreen extends JPanel implements Runnable {
         // 초기화
         this.setFocusable(true);
         this.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    paddle.moveLeft();
+                    leftPressed = true;
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    paddle.moveRight();
+                    rightPressed = true;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    leftPressed = false;
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    rightPressed = false;
                 }
             }
         });
@@ -42,14 +56,14 @@ public class GameScreen extends JPanel implements Runnable {
         paddle = new Paddle(350, 550);
         balls = new ArrayList<>();
         balls.add(new Ball(390, 530)); // 첫 번째 공 추가
-        brickManager = new BrickManager(900, 420,currentRound);
+        brickManager = new BrickManager(900, 420, currentRound);
     }
 
     private void initializeRound() {
         // 라운드 초기화: 벽돌 및 공 재설정
         balls.clear();
         balls.add(new Ball(390, 530)); // 새로운 공 추가
-        brickManager = new BrickManager(900, 420,currentRound); // 새로운 벽돌 배치
+        brickManager = new BrickManager(900, 420, currentRound); // 새로운 벽돌 배치
         System.out.println("라운드 " + currentRound + " 시작!");
     }
 
@@ -60,6 +74,15 @@ public class GameScreen extends JPanel implements Runnable {
     @Override
     public void run() {
         while (!gameOver) {
+            // 라켓 움직임 처리
+            if (leftPressed) {
+                paddle.moveLeft();
+            }
+            if (rightPressed) {
+                paddle.moveRight();
+            }
+
+            // 공 및 게임 로직 처리
             List<Ball> newBalls = new ArrayList<>();
             for (int i = 0; i < balls.size(); i++) {
                 Ball ball = balls.get(i);
@@ -97,7 +120,7 @@ public class GameScreen extends JPanel implements Runnable {
 
             repaint();
             try {
-                Thread.sleep(10);
+                Thread.sleep(10); // 화면 갱신 주기
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

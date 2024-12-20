@@ -2,7 +2,7 @@ import java.awt.*;
 
 public class Paddle {
     private int x, y, width = 100, height = 20;
-    private int speed = 15; // 이동 속도를 관리하는 변수
+    private int speed = 5; // 이동 속도를 관리하는 변수
 
     public Paddle(int x, int y) {
         this.x = x;

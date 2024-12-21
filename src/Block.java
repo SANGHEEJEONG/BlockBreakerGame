@@ -1,7 +1,11 @@
 import java.awt.*;
-import javax.swing.Timer;
+import javax.swing.*;
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.Random;
 
 public class Block {
@@ -20,9 +24,7 @@ public class Block {
         // 색상을 랜덤으로 초기화
         if (Math.random() < 0.5) {
             this.color = Color.YELLOW;
-
             startBlinking();
-
         } else {
             this.color = Color.BLUE;
         }
@@ -37,13 +39,11 @@ public class Block {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (bright) {
-                    // 밝은 상태에서 어두운 상태로 전환
                     color = Color.decode("#FFE400");
                 } else {
-                    // 어두운 상태에서 밝은 상태로 전환
                     color = Color.YELLOW;
                 }
-                bright = !bright; // 상태 전환
+                bright = !bright;
             }
         });
         blinkTimer.start();
@@ -77,9 +77,12 @@ public class Block {
     }
 
     public void destroy() {
-        destroyed = true;
-        if (blinkTimer != null) {
-            blinkTimer.stop(); // 타이머 정지
+        if (!destroyed) {
+            destroyed = true;
+            if (blinkTimer != null) {
+                blinkTimer.stop(); // 타이머 정지
+            }
+            playSound("breakBGM.wav"); // 소리 재생
         }
     }
 
@@ -89,5 +92,17 @@ public class Block {
 
     public Color getColor() {
         return color;
+    }
+
+    private void playSound(String soundFileName) {
+        try {
+            URL url = getClass().getResource(soundFileName);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 }

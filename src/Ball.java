@@ -100,14 +100,14 @@ public class Ball {
         double currentAngle = Math.atan2(dy, dx); // 현재 각도 계산
 
         // -30도 방향 공
-        double leftAngle = currentAngle - Math.toRadians(30);
+        double leftAngle = currentAngle - Math.toRadians(20);
         Ball leftBall = new Ball((int)x, (int)y);
         leftBall.setAngle(leftAngle);
         leftBall.setSpeed(speed);
         newBalls.add(leftBall);
 
         // +30도 방향 공
-        double rightAngle = currentAngle + Math.toRadians(30);
+        double rightAngle = currentAngle + Math.toRadians(20);
         Ball rightBall = new Ball((int)x, (int)y);
         rightBall.setAngle(rightAngle);
         rightBall.setSpeed(speed);

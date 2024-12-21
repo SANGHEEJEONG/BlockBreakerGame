@@ -1,7 +1,14 @@
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,12 +70,11 @@ public class GameScreen extends JPanel implements Runnable {
         // 라운드 초기화: 벽돌 및 공 재설정
         balls.clear();
         balls.add(new Ball(390, 530)); // 새로운 공 추가
-        brickManager = new BrickManager(900, 420, currentRound); // 새로운 벽돌 배치
-        System.out.println("라운드 " + currentRound + " 시작!");
+        brickManager = new BrickManager(900, 420, currentRound);
     }
 
     private boolean isRoundComplete() {
-        return brickManager.getRemainingBlocks() == 0; // 벽돌이 모두 파괴되었는지 확인
+        return brickManager.getRemainingBlocks() == 0;
     }
 
     @Override
@@ -87,8 +93,8 @@ public class GameScreen extends JPanel implements Runnable {
             for (int i = 0; i < balls.size(); i++) {
                 Ball ball = balls.get(i);
                 ball.move();
-
                 if (ball.getBounds().intersects(paddle.getBounds())) {
+                    playSound("bounceBGM.wav");
                     ball.reverseY();
                     ball.calculateReboundAngle(paddle);
                 }
@@ -150,6 +156,18 @@ public class GameScreen extends JPanel implements Runnable {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 50));
             g.drawString("GAME OVER", 250, 300);
+        }
+    }
+
+    private void playSound(String soundFileName) {
+        try {
+            URL url = getClass().getResource(soundFileName);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
         }
     }
 }

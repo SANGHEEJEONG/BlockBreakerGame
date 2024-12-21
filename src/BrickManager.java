@@ -30,7 +30,6 @@ public class BrickManager {
             if (!block.isDestroyed() && ball.getBounds().intersects(block.getBounds())) {
                 ball.reverseY();
                 if (block.getColor() != Color.BLUE) {
-                    // 공 복제를 Ball 클래스에 위임
                     newBalls.addAll(ball.split());
                 }
                 block.destroy();

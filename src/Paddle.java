@@ -25,4 +25,12 @@ public class Paddle {
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getWidth() {
+        return width;
+    }
 }

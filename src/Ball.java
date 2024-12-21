@@ -59,6 +59,28 @@ public class Ball {
         reflectY();
     }
 
+    public void calculateReboundAngle(Paddle paddle) {
+        int paddleX = paddle.getX();
+        int paddleWidth = paddle.getWidth();
+        int ballCenter = (int) (x + radius);
+
+        // 패들에 맞은 위치에 따라 각도를 계산합니다.
+        double hitPosition = (double) (ballCenter - paddleX) / paddleWidth;
+        dx = (hitPosition - 0.5) * 2 * speed;
+
+        // y 방향의 속도는 항상 위로 향하도록 설정 (속력 유지를 위해)
+        dy = -Math.abs(dy);  // 상대적인 방향을 위해 절대값 사용
+
+        // 속력을 다시 계산하여 일정하게 유지합니다.
+        double currentSpeed = Math.sqrt(dx * dx + dy * dy);
+        double adjustmentFactor = speed / currentSpeed;
+
+        // dx와 dy를 조정하여 속력을 일정하게 유지합니다.
+        dx *= adjustmentFactor;
+        dy *= adjustmentFactor;
+    }
+
+
     public boolean isOutOfBounds(int frameHeight) {
         return y >= frameHeight; // 화면 아래로 벗어나는 경우 true 반환
     }
@@ -78,21 +100,22 @@ public class Ball {
         double currentAngle = Math.atan2(dy, dx); // 현재 각도 계산
 
         // -30도 방향 공
-        double leftAngle = currentAngle - Math.toRadians(30); // -30도
+        double leftAngle = currentAngle - Math.toRadians(30);
         Ball leftBall = new Ball((int)x, (int)y);
         leftBall.setAngle(leftAngle);
-        leftBall.setSpeed(speed); // 기존 공과 동일한 속도
+        leftBall.setSpeed(speed);
         newBalls.add(leftBall);
 
         // +30도 방향 공
-        double rightAngle = currentAngle + Math.toRadians(30); // +30도
+        double rightAngle = currentAngle + Math.toRadians(30);
         Ball rightBall = new Ball((int)x, (int)y);
         rightBall.setAngle(rightAngle);
-        rightBall.setSpeed(speed); // 기존 공과 동일한 속도
+        rightBall.setSpeed(speed);
         newBalls.add(rightBall);
 
         return newBalls;
     }
+
 
     public void setAngle(double angle) {
         dx = Math.cos(angle) * speed;

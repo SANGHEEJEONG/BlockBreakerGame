@@ -87,11 +87,13 @@ public class GameScreen extends JPanel implements Runnable {
             for (int i = 0; i < balls.size(); i++) {
                 Ball ball = balls.get(i);
                 ball.move();
-                newBalls.addAll(brickManager.checkCollision(ball));
 
                 if (ball.getBounds().intersects(paddle.getBounds())) {
                     ball.reverseY();
+                    ball.calculateReboundAngle(paddle);
                 }
+
+                newBalls.addAll(brickManager.checkCollision(ball));
 
                 if (ball.isOutOfBounds(frame.getHeight())) {
                     balls.remove(ball); // 화면 아래로 벗어난 공 제거

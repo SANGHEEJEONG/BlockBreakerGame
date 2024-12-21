@@ -1,19 +1,17 @@
 import java.awt.*;
 import javax.swing.*;
 import javax.sound.sampled.*;
-import java.io.File;
 import java.io.IOException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.Random;
 
 public class Block {
     private int x, y, width, height;
     private boolean destroyed = false;
-    private Color color; // 블록의 색상을 저장
-    private Timer blinkTimer; // 반짝임 효과를 위한 타이머
-    private Random random = new Random(); // 랜덤 객체 생성
+    private float alpha = 1.0f; // 투명도 초기값 (완전 불투명)
+    private Color color;
+    private Timer blinkTimer, fadeTimer; // 반짝임 및 페이드 아웃 타이머
+    private Random random = new Random();
 
     public Block(int x, int y, int width, int height) {
         this.x = x;
@@ -31,40 +29,23 @@ public class Block {
     }
 
     private void startBlinking() {
-        int delay = 300 + random.nextInt(1700); // 0.3초에서 2초 사이의 간격
-
-        blinkTimer = new Timer(delay, new ActionListener() {
-            private boolean bright = true;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (bright) {
-                    color = Color.decode("#FFE400");
-                } else {
-                    color = Color.YELLOW;
-                }
-                bright = !bright;
-            }
+        int delay = 300 + random.nextInt(1700);
+        blinkTimer = new Timer(delay, e -> {
+            color = color.equals(Color.YELLOW) ? Color.decode("#FFE400") : Color.YELLOW;
         });
         blinkTimer.start();
     }
 
     public void draw(Graphics g) {
-        if (!destroyed) {
+        if (!destroyed || alpha > 0) {
             Graphics2D g2d = (Graphics2D) g;
-            Color shadowColor = new Color(0, 0, 0, 100);
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            Color shadowColor = new Color(0, 0, 0, (int)(100 * alpha));
             g2d.setColor(shadowColor);
             g2d.fillRoundRect(x + 5, y + 5, width, height, 10, 10);
 
             g2d.setColor(color);
             g2d.fillRoundRect(x, y, width, height, 10, 10);
-
-            GradientPaint highlight = new GradientPaint(
-                    x, y, color.brighter(),
-                    x, y + height / 2, color
-            );
-            g2d.setPaint(highlight);
-            g2d.fillRoundRect(x, y, width, height / 2, 10, 10);
 
             g2d.setColor(color.darker());
             g2d.setStroke(new BasicStroke(2));
@@ -80,10 +61,22 @@ public class Block {
         if (!destroyed) {
             destroyed = true;
             if (blinkTimer != null) {
-                blinkTimer.stop(); // 타이머 정지
+                blinkTimer.stop();
             }
-            playSound("breakBGM.wav"); // 소리 재생
+            startFading();
+            playSound("breakBGM.wav");
         }
+    }
+
+    private void startFading() {
+        fadeTimer = new Timer(50, e -> {
+            alpha -= 0.1f;
+            if (alpha <= 0) {
+                ((Timer)e.getSource()).stop();
+                alpha = 0;
+            }
+        });
+        fadeTimer.start();
     }
 
     public boolean isDestroyed() {

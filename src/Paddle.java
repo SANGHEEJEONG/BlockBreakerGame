@@ -17,14 +17,6 @@ public class Paddle {
         if (x + width < 900) x += speed; // speed 변수를 사용하여 이동
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed; // 속도 설정 메서드
-    }
-
-    public int getSpeed() {
-        return speed; // 현재 속도 반환
-    }
-
     public void draw(Graphics g) {
         g.setColor(Color.WHITE);
         g.fillRect(x, y, width, height);

@@ -53,7 +53,7 @@ public class GameScreen extends JPanel implements Runnable {
     }
 
     private void initializeGame() {
-        paddle = new Paddle(350, 550);
+        paddle = new Paddle(350, 600);
         balls = new ArrayList<>();
         balls.add(new Ball(390, 530)); // 첫 번째 공 추가
         brickManager = new BrickManager(900, 420, currentRound);

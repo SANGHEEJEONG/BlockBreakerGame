@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.sound.sampled.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -12,18 +11,11 @@ public class TitleScreen extends JPanel {
 
     public TitleScreen(JFrame frame) {
         this.frame = frame;
-        this.setBackground(Color.BLACK);
-        this.setLayout(new BorderLayout()); // 중앙 정렬을 위해 BorderLayout 사용
+        setLayout(new GridLayout(3, 1)); // 각 라벨을 세로로 정렬
+        setBackground(Color.BLACK);
 
-        // 텍스트 표시용 JLabel
-        JLabel titleLabel = new JLabel("PRESS SPACEBAR TO PLAY", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        titleLabel.setForeground(Color.WHITE); // 텍스트 색상 설정
-        this.add(titleLabel, BorderLayout.CENTER); // 중앙에 추가
-
-        // 스페이스바 입력 대기
-        this.setFocusable(true);
-        this.addKeyListener(new KeyAdapter() {
+        setFocusable(true);
+        addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -39,7 +31,6 @@ public class TitleScreen extends JPanel {
     // 배경 음악 재생
     private void playMusic(String soundFileName) {
         try {
-            // 음악 파일 위치 지정
             URL url = getClass().getResource(soundFileName);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
             clip = AudioSystem.getClip();
@@ -76,5 +67,35 @@ public class TitleScreen extends JPanel {
         frame.revalidate();
         frame.repaint();
         this.requestFocusInWindow();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.WHITE);
+
+        Font titleFont = new Font("Showcard Gothic", Font.BOLD, 60);
+        Font normalFont = new Font("Showcard Gothic", Font.BOLD, 30);
+
+        String text1 = "Java Programming";
+        String text2 = "Homework #5";
+        String subTitleText = "BLOCK BREAKER";
+        String instructionText = "PRESS SPACEBAR TO PLAY";
+
+        g.setFont(normalFont);
+        drawCenteredString(g, text1, 100, getWidth());
+        drawCenteredString(g, text2, 150, getWidth());
+        g.setFont(titleFont);
+        drawCenteredString(g, subTitleText, 300, getWidth());
+        g.setColor(Color.RED);
+        g.setFont(normalFont);
+        drawCenteredString(g, instructionText, 400, getWidth());
+    }
+
+    // 중앙에 문자열을 그리는 메서드
+    private void drawCenteredString(Graphics g, String text, int y, int width) {
+        FontMetrics metrics = g.getFontMetrics();
+        int x = (width - metrics.stringWidth(text)) / 2;
+        g.drawString(text, x, y);
     }
 }

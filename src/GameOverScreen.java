@@ -2,9 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URL;
+import javax.sound.sampled.*;
 
 public class GameOverScreen extends JPanel {
     private JFrame frame;
+    private Clip clip; // 오디오 클립을 저장할 변수
 
     public GameOverScreen(JFrame frame) {
         this.frame = frame;
@@ -34,11 +38,35 @@ public class GameOverScreen extends JPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    stopMusic();
                     TitleScreen titleScreen = new TitleScreen(frame);
                     titleScreen.showTitleScreen();
                 }
             }
         });
+
+        playMusic("gameOverBGM.wav"); // 게임 오버 음악 재생
+    }
+
+    // 배경 음악 재생
+    private void playMusic(String soundFileName) {
+        try {
+            URL url = getClass().getResource(soundFileName);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 음악 정지
+    private void stopMusic() {
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
     }
 
     public void showGameOverScreen() {

@@ -28,7 +28,7 @@ public class BrickManager {
         List<Ball> newBalls = new ArrayList<>();
         for (Block block : blocks) {
             if (!block.isDestroyed() && ball.getBounds().intersects(block.getBounds())) {
-                ball.reverseY();
+                ball.reflectWithAngle();
                 if (block.getColor() != Color.BLUE) {
                     newBalls.addAll(ball.split());
                 }

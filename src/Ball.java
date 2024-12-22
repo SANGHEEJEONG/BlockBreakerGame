@@ -25,11 +25,11 @@ public class Ball {
 
         // 벽과 충돌 처리
         if (x <= 0 || x >= 900 - radius * 2) {
-            reflectX(); // x 방향 반사
+            reflectX();
         }
 
         if (y <= 0) {
-            reflectY(); // y 방향 반사
+            reflectY();
         }
     }
 
@@ -43,6 +43,21 @@ public class Ball {
         applyAngleAdjustment(); // 각도 조정
     }
 
+    public void reflectWithAngle() {
+        dx = -dx; // X축 방향 반사
+        dy = -dy; // Y축 방향 반사
+        adjustAngle(5); // 5도 각도 조정
+    }
+
+    private void adjustAngle(double degrees) {
+        double angleAdjustment = Math.toRadians(degrees);
+        double currentAngle = Math.atan2(dy, dx);
+        double newAngle = currentAngle + (Math.random() > 0.5 ? angleAdjustment : -angleAdjustment);
+
+        dx = Math.cos(newAngle) * speed;
+        dy = Math.sin(newAngle) * speed;
+    }
+
     private void applyAngleAdjustment() {
         // ±10도 정도의 각도 변화
         double angleAdjustment = Math.toRadians((Math.random() - 0.5) * 20); // -10도 ~ +10도
@@ -53,10 +68,6 @@ public class Ball {
         double newSpeed = Math.sqrt(dx * dx + dy * dy); // 기존 속도 유지
         dx = Math.cos(newAngle) * newSpeed;
         dy = Math.sin(newAngle) * newSpeed;
-    }
-
-    public void reverseY() {
-        reflectY();
     }
 
     public void calculateReboundAngle(Paddle paddle) {

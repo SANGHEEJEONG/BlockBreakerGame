@@ -95,7 +95,6 @@ public class GameScreen extends JPanel implements Runnable {
                 ball.move();
                 if (ball.getBounds().intersects(paddle.getBounds())) {
                     playSound("bounceBGM.wav");
-                    ball.reverseY();
                     ball.calculateReboundAngle(paddle);
                 }
 

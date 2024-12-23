@@ -7,24 +7,34 @@ public class Ball {
     private double dx, dy; // 공의 이동 방향
     private int radius = 5; // 공의 반지름
     private double speed; // 공의 속도
+    private int round; // 현재 라운드
 
-    public Ball(int x, int y) {
+    public Ball(int x, int y, int initialRound) {
         this.x = x;
         this.y = y;
+        this.round = initialRound;
 
-        // 초기 속도 및 각도 설정
-        speed = 6; // 3~5 사이 속도
-        double angle = Math.toRadians(Math.random() * 90 + 45); // 45도~135도 랜덤 각도
+        // 라운드에 따라 속도 조정
+        updateSpeedForRound();
+
+        // 초기 각도 설정
+        double angle = Math.toRadians(Math.random() * 45 + 45); // 45도~135도 랜덤 각도
         dx = Math.cos(angle) * speed;
         dy = -Math.abs(Math.sin(angle) * speed); // 위쪽(음수 방향)으로 설정
     }
+
+    // 라운드에 따라 속도 업데이트
+    public void updateSpeedForRound() {
+        this.speed = 6 + round - 1; // 기본 속도 5에 라운드마다 1씩 증가
+    }
+
 
     public void move() {
         x += dx;
         y += dy;
 
         // 벽과 충돌 처리
-        if (x <= 0 || x >= 900 - radius * 2) {
+        if (x <= 0 || x >= 885 - radius * 2) {
             reflectX();
         }
 
@@ -127,14 +137,14 @@ public class Ball {
 
         // -30도 방향 공
         double leftAngle = currentAngle - Math.toRadians(20);
-        Ball leftBall = new Ball((int)x, (int)y);
+        Ball leftBall = new Ball((int)x, (int)y,round);
         leftBall.setAngle(leftAngle);
         leftBall.setSpeed(speed);
         newBalls.add(leftBall);
 
         // +30도 방향 공
         double rightAngle = currentAngle + Math.toRadians(20);
-        Ball rightBall = new Ball((int)x, (int)y);
+        Ball rightBall = new Ball((int)x, (int)y,round);
         rightBall.setAngle(rightAngle);
         rightBall.setSpeed(speed);
         newBalls.add(rightBall);

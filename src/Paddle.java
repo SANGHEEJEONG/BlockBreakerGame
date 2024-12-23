@@ -1,7 +1,7 @@
 import java.awt.*;
 
 public class Paddle {
-    private int x, y, width = 100, height = 20;
+    private int x, y, width = 150, height = 20;
     private int speed = 5; // 이동 속도를 관리하는 변수
 
     public Paddle(int x, int y) {
@@ -14,7 +14,7 @@ public class Paddle {
     }
 
     public void moveRight() {
-        if (x + width < 900) x += speed; // speed 변수를 사용하여 이동
+        if (x + width < 885) x += speed; // speed 변수를 사용하여 이동
     }
 
     public void draw(Graphics g) {

@@ -63,7 +63,7 @@ public class GameScreen extends JPanel implements Runnable {
     private void initializeGame() {
         paddle = new Paddle(350, 600);
         balls = new ArrayList<>();
-        balls.add(new Ball(390, 530)); // 첫 번째 공 추가
+        balls.add(new Ball(390, 530,currentRound)); // 첫 번째 공 추가
         brickManager = new BlockManager(900, 420, currentRound);
         scoreManager = ScoreManager.getInstance();
         scoreManager.resetCurrentScore();
@@ -72,7 +72,7 @@ public class GameScreen extends JPanel implements Runnable {
     private void initializeRound() {
         // 라운드 초기화: 벽돌 및 공 재설정
         balls.clear();
-        balls.add(new Ball(390, 530)); // 새로운 공 추가
+        balls.add(new Ball(390, 530,currentRound)); // 새로운 공 추가
         brickManager = new BlockManager(900, 420, currentRound);
     }
 
@@ -148,11 +148,6 @@ public class GameScreen extends JPanel implements Runnable {
             ball.draw(g);
         }
         brickManager.draw(g);
-
-        // 라운드 정보 표시
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 20));
-        g.drawString("라운드: " + currentRound + "/" + totalRounds, 10, 20);
 
         if (gameOver) {
             g.setColor(Color.WHITE);

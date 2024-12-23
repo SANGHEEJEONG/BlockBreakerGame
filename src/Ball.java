@@ -52,11 +52,26 @@ public class Ball {
     private void adjustAngle(double degrees) {
         double angleAdjustment = Math.toRadians(degrees);
         double currentAngle = Math.atan2(dy, dx);
-        double newAngle = currentAngle + (Math.random() > 0.5 ? angleAdjustment : -angleAdjustment);
+        double newAngle;
 
+        if (dx < 0) { // dx가 음수인 경우 (3사분면 또는 4사분면)
+            // 3사분면 (dx < 0, dy < 0) -> 각도를 증가
+            // 4사분면 (dx < 0, dy > 0) -> 각도를 감소
+            if (dy < 0) {
+                newAngle = currentAngle + angleAdjustment; // 3사분면: 각도 증가
+            } else {
+                newAngle = currentAngle - angleAdjustment; // 4사분면: 각도 감소
+            }
+        } else { // 1사분면 또는 2사분면 (dx가 양수인 경우)
+            // 기존 로직 유지 또는 추가 조건 적용
+            newAngle = currentAngle + (Math.random() > 0.5 ? angleAdjustment : -angleAdjustment);
+        }
+
+        // 새로운 방향 벡터 계산
         dx = Math.cos(newAngle) * speed;
         dy = Math.sin(newAngle) * speed;
     }
+
 
     private void applyAngleAdjustment() {
         // ±10도 정도의 각도 변화

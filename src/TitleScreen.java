@@ -72,24 +72,30 @@ public class TitleScreen extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.WHITE);
+
+        // 그라데이션 배경 설정
+        Graphics2D g2d = (Graphics2D) g;
+        GradientPaint gp = new GradientPaint(0, getHeight()*0.3f, Color.BLACK, 0, getHeight(), Color.BLUE);
+        g2d.setPaint(gp);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
 
         Font titleFont = new Font("Showcard Gothic", Font.BOLD, 60);
-        Font normalFont = new Font("Showcard Gothic", Font.BOLD, 30);
+        Font normalFont = new Font("Comic Sans MS", Font.BOLD, 30);
 
         String text1 = "Java Programming";
         String text2 = "Homework #5";
         String subTitleText = "BLOCK BREAKER";
         String instructionText = "PRESS SPACEBAR TO PLAY";
 
+        g.setColor(Color.WHITE);
         g.setFont(normalFont);
-        drawCenteredString(g, text1, 100, getWidth());
-        drawCenteredString(g, text2, 150, getWidth());
+        drawCenteredString(g, text1, 180, getWidth());
+        drawCenteredString(g, text2, 230, getWidth());
         g.setFont(titleFont);
-        drawCenteredString(g, subTitleText, 300, getWidth());
-        g.setColor(Color.RED);
+        drawCenteredString(g, subTitleText, 350, getWidth());
+        g.setColor(Color.YELLOW);
         g.setFont(normalFont);
-        drawCenteredString(g, instructionText, 400, getWidth());
+        drawCenteredString(g, instructionText, 500, getWidth());
     }
 
     // 중앙에 문자열을 그리는 메서드

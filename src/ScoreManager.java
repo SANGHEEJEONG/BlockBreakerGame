@@ -1,9 +1,8 @@
 public class ScoreManager {
-    private static ScoreManager instance; // 싱글톤 인스턴스
-    private int highScore = 0; // 최고 점수
-    private int currentScore = 0; // 현재 점수
+    private static ScoreManager instance;
+    private int highScore = 0;
+    private int currentScore = 0;
 
-    // 생성자를 private으로 선언하여 외부에서 인스턴스를 생성하지 못하게 함
     private ScoreManager() {}
 
     // 싱글톤 인스턴스 접근 메서드

@@ -8,10 +8,10 @@ import java.util.Random;
 public class Block {
     private int x, y, width, height;
     private boolean destroyed = false;
-    private float alpha = 1.0f; // 투명도 초기값 (완전 불투명)
+    private float alpha = 1.0f;
     private Color color;
-    private Timer blinkTimer, fadeTimer; // 반짝임 및 페이드 아웃 타이머
-    private Random random = new Random();
+    private Timer blinkTimer;
+    private final Random random = new Random();
 
     public Block(int x, int y, int width, int height) {
         this.x = x;
@@ -69,10 +69,10 @@ public class Block {
     }
 
     private void startFading() {
-        fadeTimer = new Timer(50, e -> {
+        Timer fadeTimer = new Timer(50, e -> {
             alpha -= 0.1f;
             if (alpha <= 0) {
-                ((Timer)e.getSource()).stop();
+                ((Timer) e.getSource()).stop();
                 alpha = 0;
             }
         });
@@ -95,7 +95,7 @@ public class Block {
             clip.open(audioInputStream);
             clip.start();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
+
         }
     }
 }

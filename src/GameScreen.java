@@ -1,8 +1,4 @@
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -15,64 +11,60 @@ import java.util.List;
 public class GameScreen extends JPanel implements Runnable {
     private JFrame frame;
     private Paddle paddle;
-    private List<Ball> balls; // 공 리스트로 관리
+    private List<Ball> balls;
     private BlockManager brickManager;
     private ScoreManager scoreManager;
     private boolean gameOver = false;
 
-    // 라운드 관련 변수
-    private int currentRound = 1; // 현재 라운드
-    private int totalRounds = 5;  // 총 라운드 수
+    private int currentRound = 1;
+    private final int totalRounds = 10;
 
-    // 키 상태 변수
     private boolean leftPressed = false;
     private boolean rightPressed = false;
 
     public GameScreen(JFrame frame) {
         this.frame = frame;
-        this.setBackground(Color.BLACK);
+        setBackground(Color.BLACK);
+        setFocusable(true);
+        setupKeyBindings();
+        initializeGame();
+        new Thread(this).start();
+    }
 
-        // 초기화
-        this.setFocusable(true);
-        this.addKeyListener(new KeyAdapter() {
+    private void setupKeyBindings() {
+        addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    leftPressed = true;
-                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    rightPressed = true;
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_LEFT:
+                        leftPressed = true;
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        rightPressed = true;
+                        break;
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    leftPressed = false;
-                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    rightPressed = false;
-                }
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) leftPressed = false;
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) rightPressed = false;
             }
         });
-
-        initializeGame();
-
-        // 게임 스레드 시작
-        new Thread(this).start();
     }
 
     private void initializeGame() {
         paddle = new Paddle(350, 600);
         balls = new ArrayList<>();
-        balls.add(new Ball(390, 530,currentRound)); // 첫 번째 공 추가
+        balls.add(new Ball(390, 530, currentRound));
         brickManager = new BlockManager(900, 420, currentRound);
         scoreManager = ScoreManager.getInstance();
         scoreManager.resetCurrentScore();
     }
 
     private void initializeRound() {
-        // 라운드 초기화: 벽돌 및 공 재설정
         balls.clear();
-        balls.add(new Ball(390, 530,currentRound)); // 새로운 공 추가
+        balls.add(new Ball(390, 530, currentRound));
         brickManager = new BlockManager(900, 420, currentRound);
     }
 
@@ -83,72 +75,73 @@ public class GameScreen extends JPanel implements Runnable {
     @Override
     public void run() {
         while (!gameOver) {
-            // 라켓 움직임 처리
-            if (leftPressed) {
-                paddle.moveLeft();
-            }
-            if (rightPressed) {
-                paddle.moveRight();
-            }
-
-            // 공 및 게임 로직 처리
-            List<Ball> newBalls = new ArrayList<>();
-            for (int i = 0; i < balls.size(); i++) {
-                Ball ball = balls.get(i);
-                ball.move();
-                if (ball.getBounds().intersects(paddle.getBounds())) {
-                    playSound("bounceBGM.wav");
-                    ball.calculateReboundAngle(paddle);
-                }
-
-                newBalls.addAll(brickManager.checkCollision(ball, scoreManager));
-
-                if (ball.isOutOfBounds(frame.getHeight())) {
-                    balls.remove(ball); // 화면 아래로 벗어난 공 제거
-                    i--; // 리스트에서 공 제거 후 인덱스 조정
-                }
-            }
-
-            balls.addAll(newBalls); // 복제된 공 추가
-
-            if (balls.isEmpty() && brickManager.getRemainingBlocks() > 0) {
-                System.out.println("Game Over 조건 충족");
-                gameOver = true;
-                break;
-            }
-
-            if (isRoundComplete()) { // 라운드 완료 확인
-                if (currentRound < totalRounds) {
-                    currentRound++;
-                    initializeRound(); // 다음 라운드 초기화
-                } else {
-                    System.out.println("모든 라운드 완료!");
-                    gameOver = true; // 모든 라운드 종료
-                    break;
-                }
-            }
-
+            processGameLogic();
             repaint();
-            try {
-                Thread.sleep(10); // 화면 갱신 주기
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            sleepThread();
+        }
+        displayGameOverScreen();
+    }
+
+    private void processGameLogic() {
+        if (leftPressed) paddle.moveLeft();
+        if (rightPressed) paddle.moveRight();
+        updateBalls();
+        checkGameConditions();
+    }
+
+    private void updateBalls() {
+        List<Ball> newBalls = new ArrayList<>();
+        for (int i = 0; i < balls.size(); i++) {
+            Ball ball = balls.get(i);
+            ball.move();
+            if (ball.getBounds().intersects(paddle.getBounds())) {
+                playSound("bounceBGM.wav");
+                ball.calculateReboundAngle(paddle);
+            }
+            newBalls.addAll(brickManager.checkCollision(ball, scoreManager));
+            if (ball.isOutOfBounds(frame.getHeight())) {
+                balls.remove(i--);
             }
         }
+        balls.addAll(newBalls);
+    }
 
-        GameOverScreen gameOverScreen = new GameOverScreen(frame,scoreManager);
+    private void checkGameConditions() {
+        if (balls.isEmpty() && brickManager.getRemainingBlocks() > 0) {
+            gameOver = true;
+        } else if (isRoundComplete()) {
+            if (currentRound < totalRounds) {
+                currentRound++;
+                initializeRound();
+            } else {
+                gameOver = true;
+            }
+        }
+    }
+
+    private void sleepThread() {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayGameOverScreen() {
+        GameOverScreen gameOverScreen = new GameOverScreen(frame, scoreManager);
         gameOverScreen.showGameOverScreen();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        paddle.draw(g);
-        for (Ball ball : balls) { // 모든 공 그리기
-            ball.draw(g);
-        }
-        brickManager.draw(g);
+        drawGameElements(g);
+    }
 
+    private void drawGameElements(Graphics g) {
+        paddle.draw(g);
+        balls.forEach(ball -> ball.draw(g));
+        brickManager.draw(g);
         if (gameOver) {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 50));

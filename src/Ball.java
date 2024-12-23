@@ -3,31 +3,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Ball {
-    private double x, y; // 공의 위치
-    private double dx, dy; // 공의 이동 방향
-    private int radius = 5; // 공의 반지름
-    private double speed; // 공의 속도
-    private int round; // 현재 라운드
+    private double x, y;
+    private double dx, dy;
+    private int radius = 5;
+    private double speed;
+    private int round;
 
     public Ball(int x, int y, int initialRound) {
         this.x = x;
         this.y = y;
         this.round = initialRound;
 
-        // 라운드에 따라 속도 조정
         updateSpeedForRound();
 
-        // 초기 각도 설정
-        double angle = Math.toRadians(Math.random() * 45 + 45); // 45도~135도 랜덤 각도
+        double angle = Math.toRadians(Math.random() * 45 + 45);
         dx = Math.cos(angle) * speed;
-        dy = -Math.abs(Math.sin(angle) * speed); // 위쪽(음수 방향)으로 설정
+        dy = -Math.abs(Math.sin(angle) * speed); // 위쪽으로 설정
     }
 
-    // 라운드에 따라 속도 업데이트
     public void updateSpeedForRound() {
-        this.speed = 6 + round - 1; // 기본 속도 5에 라운드마다 1씩 증가
+        this.speed = 6 + round - 1; // 기본 속력 6에 라운드마다 1씩 증가
     }
-
 
     public void move() {
         x += dx;
@@ -54,8 +50,8 @@ public class Ball {
     }
 
     public void reflectWithAngle() {
-        dx = -dx; // X축 방향 반사
-        dy = -dy; // Y축 방향 반사
+        dx = -dx;
+        dy = -dy;
         adjustAngle(5); // 5도 각도 조정
     }
 
@@ -64,32 +60,25 @@ public class Ball {
         double currentAngle = Math.atan2(dy, dx);
         double newAngle;
 
-        if (dx < 0) { // dx가 음수인 경우 (3사분면 또는 4사분면)
-            // 3사분면 (dx < 0, dy < 0) -> 각도를 증가
-            // 4사분면 (dx < 0, dy > 0) -> 각도를 감소
+        if (dx < 0) {
             if (dy < 0) {
-                newAngle = currentAngle + angleAdjustment; // 3사분면: 각도 증가
+                newAngle = currentAngle + angleAdjustment;
             } else {
-                newAngle = currentAngle - angleAdjustment; // 4사분면: 각도 감소
+                newAngle = currentAngle - angleAdjustment;
             }
-        } else { // 1사분면 또는 2사분면 (dx가 양수인 경우)
-            // 기존 로직 유지 또는 추가 조건 적용
+        } else {
             newAngle = currentAngle + (Math.random() > 0.5 ? angleAdjustment : -angleAdjustment);
         }
 
-        // 새로운 방향 벡터 계산
         dx = Math.cos(newAngle) * speed;
         dy = Math.sin(newAngle) * speed;
     }
 
-
     private void applyAngleAdjustment() {
-        // ±10도 정도의 각도 변화
-        double angleAdjustment = Math.toRadians((Math.random() - 0.5) * 20); // -10도 ~ +10도
+        double angleAdjustment = Math.toRadians((Math.random() - 0.5) * 20);
         double currentAngle = Math.atan2(dy, dx);
         double newAngle = currentAngle + angleAdjustment;
 
-        // 새로운 방향 벡터 계산
         double newSpeed = Math.sqrt(dx * dx + dy * dy); // 기존 속도 유지
         dx = Math.cos(newAngle) * newSpeed;
         dy = Math.sin(newAngle) * newSpeed;
@@ -100,18 +89,16 @@ public class Ball {
         int paddleWidth = paddle.getWidth();
         int ballCenter = (int) (x + radius);
 
-        // 패들에 맞은 위치에 따라 각도를 계산합니다.
+        // 패들에 충돌한 위치에 따라 각도를 계산
         double hitPosition = (double) (ballCenter - paddleX) / paddleWidth;
         dx = (hitPosition - 0.5) * 2 * speed;
+        dy = -Math.abs(dy);
 
-        // y 방향의 속도는 항상 위로 향하도록 설정 (속력 유지를 위해)
-        dy = -Math.abs(dy);  // 상대적인 방향을 위해 절대값 사용
-
-        // 속력을 다시 계산하여 일정하게 유지합니다.
+        // 속력을 다시 계산하여 일정하게 유지
         double currentSpeed = Math.sqrt(dx * dx + dy * dy);
         double adjustmentFactor = speed / currentSpeed;
 
-        // dx와 dy를 조정하여 속력을 일정하게 유지합니다.
+        // dx와 dy를 조정하여 속력을 일정하게 유지
         dx *= adjustmentFactor;
         dy *= adjustmentFactor;
     }

@@ -4,14 +4,14 @@ import java.util.List;
 
 public class BlockManager {
     private List<Block> blocks;
-    private static final int LEFT_WALL_WIDTH = 10; // 왼쪽 벽의 너비
-    private static final int RIGHT_WALL_WIDTH = 20; // 오른쪽 벽의 너비
+    private static final int LEFT_WALL_WIDTH = 10;
+    private static final int RIGHT_WALL_WIDTH = 20;
 
     public BlockManager(int panelWidth, int panelHeight, int round) {
         blocks = new ArrayList<>();
-        int rows = round * 3; // 라운드에 따라 행 수 증가
-        int cols = round * 3; // 라운드에 따라 열 수 증가
-        int padding = 7; // 블록 간의 간격(패딩)
+        int rows = round * 3;
+        int cols = round * 3;
+        int padding = 7;
 
         // 왼쪽과 오른쪽 벽 너비를 고려한 패널의 사용 가능한 너비
         int availableWidth = panelWidth - LEFT_WALL_WIDTH - RIGHT_WALL_WIDTH;
@@ -22,8 +22,8 @@ public class BlockManager {
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                int x = LEFT_WALL_WIDTH + col * (blockWidth + padding); // 왼쪽 벽 너비를 고려한 x 좌표
-                int y = row * (blockHeight + padding); // 패딩 추가된 y 좌표
+                int x = LEFT_WALL_WIDTH + col * (blockWidth + padding);
+                int y = row * (blockHeight + padding);
                 blocks.add(new Block(x, y, blockWidth, blockHeight));
             }
         }

@@ -11,7 +11,6 @@ public class TitleScreen extends JPanel {
 
     public TitleScreen(JFrame frame) {
         this.frame = frame;
-        setLayout(new GridLayout(3, 1)); // 각 라벨을 세로로 정렬
         setBackground(Color.BLACK);
 
         setFocusable(true);
@@ -54,7 +53,7 @@ public class TitleScreen extends JPanel {
     private void startGame() {
         stopMusic();  // 게임 시작 시 음악 정지
         frame.remove(this);
-        GameScreen gameScreen = new GameScreen(frame); // GameScreen 클래스를 정의해야 합니다.
+        GameScreen gameScreen = new GameScreen(frame);
         frame.add(gameScreen);
         frame.revalidate();
         frame.repaint();

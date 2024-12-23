@@ -2,10 +2,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BrickManager {
+public class BlockManager {
     private List<Block> blocks;
 
-    public BrickManager(int panelWidth, int panelHeight, int round) {
+    public BlockManager(int panelWidth, int panelHeight, int round) {
         blocks = new ArrayList<>();
         int rows = round * 3; // 라운드에 따라 행 수 증가
         int cols = round * 3; // 라운드에 따라 열 수 증가
@@ -24,7 +24,7 @@ public class BrickManager {
         }
     }
 
-    public List<Ball> checkCollision(Ball ball) {
+    public List<Ball> checkCollision(Ball ball, ScoreManager scoreManager) {
         List<Ball> newBalls = new ArrayList<>();
         for (Block block : blocks) {
             if (!block.isDestroyed() && ball.getBounds().intersects(block.getBounds())) {
@@ -33,6 +33,7 @@ public class BrickManager {
                     newBalls.addAll(ball.split());
                 }
                 block.destroy();
+                scoreManager.addScore(10);
                 break;
             }
         }

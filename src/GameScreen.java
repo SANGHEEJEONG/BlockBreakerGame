@@ -16,12 +16,13 @@ public class GameScreen extends JPanel implements Runnable {
     private JFrame frame;
     private Paddle paddle;
     private List<Ball> balls; // 공 리스트로 관리
-    private BrickManager brickManager;
+    private BlockManager brickManager;
+    private ScoreManager scoreManager;
     private boolean gameOver = false;
 
     // 라운드 관련 변수
     private int currentRound = 1; // 현재 라운드
-    private int totalRounds = 3;  // 총 라운드 수
+    private int totalRounds = 5;  // 총 라운드 수
 
     // 키 상태 변수
     private boolean leftPressed = false;
@@ -63,14 +64,16 @@ public class GameScreen extends JPanel implements Runnable {
         paddle = new Paddle(350, 600);
         balls = new ArrayList<>();
         balls.add(new Ball(390, 530)); // 첫 번째 공 추가
-        brickManager = new BrickManager(900, 420, currentRound);
+        brickManager = new BlockManager(900, 420, currentRound);
+        scoreManager = ScoreManager.getInstance();
+        scoreManager.resetCurrentScore();
     }
 
     private void initializeRound() {
         // 라운드 초기화: 벽돌 및 공 재설정
         balls.clear();
         balls.add(new Ball(390, 530)); // 새로운 공 추가
-        brickManager = new BrickManager(900, 420, currentRound);
+        brickManager = new BlockManager(900, 420, currentRound);
     }
 
     private boolean isRoundComplete() {
@@ -98,7 +101,7 @@ public class GameScreen extends JPanel implements Runnable {
                     ball.calculateReboundAngle(paddle);
                 }
 
-                newBalls.addAll(brickManager.checkCollision(ball));
+                newBalls.addAll(brickManager.checkCollision(ball, scoreManager));
 
                 if (ball.isOutOfBounds(frame.getHeight())) {
                     balls.remove(ball); // 화면 아래로 벗어난 공 제거
@@ -133,7 +136,7 @@ public class GameScreen extends JPanel implements Runnable {
             }
         }
 
-        GameOverScreen gameOverScreen = new GameOverScreen(frame);
+        GameOverScreen gameOverScreen = new GameOverScreen(frame,scoreManager);
         gameOverScreen.showGameOverScreen();
     }
 

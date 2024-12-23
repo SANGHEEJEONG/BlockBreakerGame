@@ -11,10 +11,12 @@ public class GameOverScreen extends JPanel {
     private JFrame frame;
     private Clip clip; // 오디오 클립을 저장할 변수
     private boolean isVisibleText2 = true; // text2의 표시 상태를 제어
+    ScoreManager scoreManager;
     private Timer timer; // 깜빡임 효과를 위한 타이머
 
-    public GameOverScreen(JFrame frame) {
+    public GameOverScreen(JFrame frame,ScoreManager scoreManager) {
         this.frame = frame;
+        this.scoreManager = scoreManager;
         setBackground(Color.BLACK);
         setFocusable(true);
         addKeyListener(new KeyAdapter() {
@@ -84,21 +86,30 @@ public class GameOverScreen extends JPanel {
         g2d.setPaint(gp);
         g2d.fillRect(0, 0, getWidth(), getHeight());
 
-        Font titleFont = new Font("Showcard Gothic", Font.BOLD, 60);
+        Font titleFont = new Font("Showcard Gothic", Font.BOLD, 70);
         Font normalFont = new Font("Comic Sans MS", Font.BOLD, 30);
+        Font normalFont2 = new Font("Comic Sans MS", Font.BOLD, 40);
 
         String text1 = "GAME OVER";
+        String highScoreText = "HIGH SCORE: " + scoreManager.getHighScore();
+        String currentScoreText = "YOUR SCORE: " + scoreManager.getCurrentScore();
 
         g.setColor(Color.WHITE);
         g.setFont(titleFont);
-        drawCenteredString(g, text1, this.getHeight() / 2 - 50, this.getWidth());
+        drawCenteredString(g, text1, this.getHeight() / 2 - 40, this.getWidth());
 
         if (isVisibleText2) {
             String text2 = "PRESS SPACEBAR!";
-            g.setFont(normalFont);
+            g.setFont(normalFont2);
             g.setColor(Color.YELLOW);
-            drawCenteredString(g, text2, this.getHeight() / 2 + 50, this.getWidth());
+            drawCenteredString(g, text2, this.getHeight() / 2 + 170, this.getWidth());
         }
+
+        // 점수 표시
+        g.setFont(normalFont);
+        g.setColor(Color.GREEN);
+        drawCenteredString(g, highScoreText, this.getHeight() / 2 + 35, this.getWidth());
+        drawCenteredString(g, currentScoreText, this.getHeight() / 2 + 75, this.getWidth());
     }
 
     // 중앙에 문자열을 그리는 메서드
